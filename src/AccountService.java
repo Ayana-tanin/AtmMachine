@@ -6,6 +6,7 @@ public class AccountService {
     private Account currentAccount;
 
     public void addNewAccount(int pinCode) {
+
         if (pinCode > 999 && pinCode < 99999999) {
             Account newAccount = new Account(pinCode);
             bankAccounts.add(newAccount);
@@ -29,8 +30,7 @@ public class AccountService {
     }
 
     public boolean checkPinCode(int pinCode) {
-        if (currentAccount != null && currentAccount.getPinCode() == pinCode) {
-            System.out.println("Вы вошли в меню.");
+        if (currentAccount.getPinCode() == pinCode && currentAccount != null) {
             return true;
         }
         System.out.println("Пароль не соответствует.");
@@ -38,7 +38,7 @@ public class AccountService {
     }
 
     public void deleteAccount(int pinCode) {
-        if (checkPinCode(pinCode)) {
+        if (checkPinCode(pinCode) && currentAccount != null) {
             currentAccount = null;
             System.out.println("Счет удален.");
         } else {
@@ -48,7 +48,7 @@ public class AccountService {
     }
 
     public void withdraw(double amount) {
-        if (currentAccount.withdraw(amount)) {
+        if (currentAccount.withdraw(amount) && currentAccount != null) {
             System.out.println("С вашего счета была снята " + amount);
         } else {
             System.out.println("На счету недостаточно средств");
@@ -57,7 +57,9 @@ public class AccountService {
     }
 
     public void deposit(double amount) {
-        currentAccount.deposit(amount);
+        if (currentAccount != null) {
+            currentAccount.deposit(amount);
+        }
     }
 
     public void displayBalance() {
@@ -68,5 +70,6 @@ public class AccountService {
         System.out.println("Персональный номер аккаунта -- " + currentAccount.getAccountNumber() + "\n" +
                 "Баланс на текущей момент -- " + currentAccount.getBalance() + "\n" +
                 "Ваш пин-код (просим его никому не сообщать) -- " + currentAccount.getPinCode());
+
     }
 }

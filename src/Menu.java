@@ -4,6 +4,7 @@ import java.util.Scanner;
 public class Menu {
     private Scanner scanner = new Scanner(System.in);
     private AccountService accountService = new AccountService();
+    private boolean sessionActive = true;
 
     public void start() {
         while (true) {
@@ -32,12 +33,13 @@ public class Menu {
         Account account = accountService.findAccountByNumber(accountNumber);
 
         if (account != null) {
-            for (int i = 0; i < 4; i++) {
+            for (int i = 3; i > 0; i--) {
                 System.out.print("Введите пароль:");
                 int pinCode = scanner.nextInt();
 
                 if (accountService.checkPinCode(pinCode)) {
                     menuOptions();
+                    break;
                 } else {
                     System.out.println("Не правельный пароль. Осталось " + i + " попыток.");
                 }
@@ -48,7 +50,7 @@ public class Menu {
     private void menuOptions() {
         int menuNumber;
         displayMenu();
-        while (true) {
+        while (sessionActive) {
             menuNumber = scanner.nextInt();
             switch (menuNumber) {
                 case 0:
@@ -74,8 +76,10 @@ public class Menu {
                     System.out.println("Для потдверждения удаления счета введите пароль");
                     int pinCode = scanner.nextInt();
                     accountService.deleteAccount(pinCode);
+                    sessionActive = false;
                     break;
                 case 6:
+                    sessionActive = false;
                     break;
                 default:
                     System.out.println("Такой опции нет.");
@@ -83,6 +87,7 @@ public class Menu {
             }
         }
     }
+
 
     public void displayMenu() {
         System.out.println("Меню возможностей Банкомата! \n" + "0. Показать меню возможностей заново \n" + "1. Проверить доступный баланс. \n" + "2. Пополнить счет \n" + "3. Снять деньги \n" + "4. Выписка с информацией о пользователе \n" + "5. Удалить счет \n" + "6. Выход");
@@ -98,7 +103,9 @@ public class Menu {
 
     public static void main(String[] args) {
         Menu menu = new Menu();
-        menu.start();
+        if (menu.sessionActive) {
+            menu.start();
+        }
     }
 }
 
